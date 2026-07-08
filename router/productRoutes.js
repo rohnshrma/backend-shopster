@@ -1,16 +1,16 @@
 import { Router } from "express";
 import {
   addProduct,
-  deletProduct,
+  deleteProduct,
   getAllProducts,
   updateProduct,
 } from "../controllers/productController.js";
 
 const router = Router();
 
-router.route("/fetch").get(getAllProducts);
-router.route("/added").post(addProduct);
-router.route("/updated/:id").put(updateProduct);
-router.route("/deleted/:id").delete(deletProduct);
+router.route("/").get(getAllProducts);
+router.route("/").post(addProduct);
+router.route("/:id").put(updateProduct);
+router.route("/:id").delete(deleteProduct);
 
 export default router;

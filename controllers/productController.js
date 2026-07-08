@@ -35,12 +35,12 @@ export const addProduct = async (req, res) => {
       });
     }
 
-    const existingProducts = await Product.findOne({ name });
+    const existingProduct = await Product.findOne({ name });
 
-    if (existingProducts) {
+    if (existingProduct) {
       return res.status(409).json({
         status: "Fail",
-        message: "Product Alredy Exists",
+        message: "Product Already Exists",
       });
     }
 
@@ -91,7 +91,7 @@ export const updateProduct = async (req, res) => {
 
     return res.status(200).json({
       status: "Success",
-      message: "Product Upadted Successfully",
+      message: "Product Updated Successfully",
       data: updatedProduct,
     });
   } catch (error) {
@@ -102,11 +102,11 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const deletProduct = async (req, res) => {
+export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     // const userId = req.user._id;
-    const deletedProduct = await Product.findByIdAndDelete({ _id: id });
+    await Product.findByIdAndDelete({ _id: id });
     return res.status(200).json({
       status: "Success",
       message: "Product Deleted Successfully",
