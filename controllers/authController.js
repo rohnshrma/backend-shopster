@@ -1,10 +1,11 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const generateToken = require("../utils/generateToken");
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import generateToken from "../utils/generateToken.js";
 
 
 // Register Controller
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
@@ -39,7 +40,7 @@ exports.register = async (req, res) => {
 
 
 // Login Controller
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -78,7 +79,7 @@ exports.login = async (req, res) => {
 
 // Get User Profile Controller
 
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
 
