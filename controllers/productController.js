@@ -3,13 +3,6 @@ import Product from "../models/productModel.js";
 export const getAllProducts = async (req, res) => {
   try {
     const getProducts = await Product.find();
-    if (getProducts.length === 0) {
-      return res.status(404).json({
-        status: "Fail",
-        message: "Product Not Found",
-      });
-    }
-
     return res.status(200).json({
       status: "Success",
       message: "Products Fetched Successfully",
@@ -106,7 +99,15 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
     // const userId = req.user._id;
-    await Product.findByIdAndDelete({ _id: id });
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Product Not Found",
+      });
+    }
+
     return res.status(200).json({
       status: "Success",
       message: "Product Deleted Successfully",
