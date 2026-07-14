@@ -5,6 +5,8 @@ import productRoutes from "./router/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import cors from "cors";
 import morgan from "morgan";
+import cartRoutes from "./routes/cartRoutes.js";
+import buyerRoutes from "./router/buyerRoutes.js";
 
 config();
 connectDB();
@@ -20,6 +22,8 @@ app.use(morgan("dev"));
 
 app.use("/api/product", productRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/cart", cartRoutes);
+app.use("/api/buyer", buyerRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server Running On Port: ${PORT}`);
