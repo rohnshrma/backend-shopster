@@ -9,7 +9,6 @@ import cartRoutes from "./router/cartRoutes.js";
 import buyerRoutes from "./router/buyerRoutes.js";
 
 config();
-connectDB();
 
 const app = express();
 
@@ -25,6 +24,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/buyer", buyerRoutes);
 
-app.listen(PORT, () => {
+const startServer = async () => {
+  await connectDB();
+  await app.listen(PORT);
   console.log(`Server Running On Port: ${PORT}`);
-});
+};
+
+startServer();
