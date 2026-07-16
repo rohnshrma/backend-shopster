@@ -2,10 +2,10 @@ import express from "express";
 import { config } from "dotenv";
 import connectDB from "./config/db.js";
 import productRoutes from "./router/productRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
+import authRoutes from "./router/authRoutes.js";
 import cors from "cors";
 import morgan from "morgan";
-import cartRoutes from "./routes/cartRoutes.js";
+import cartRoutes from "./router/cartRoutes.js";
 import buyerRoutes from "./router/buyerRoutes.js";
 
 config();

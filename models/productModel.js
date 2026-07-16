@@ -8,11 +8,6 @@ const productSchema = new mongoose.Schema(
       minlength: 3,
     },
 
-    // userId: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "User",
-    // },
-
     description: {
       type: String,
     },
@@ -26,6 +21,11 @@ const productSchema = new mongoose.Schema(
     price: {
       type: Number,
       required: true,
+    },
+
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true },

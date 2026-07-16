@@ -2,7 +2,8 @@ import Product from "../models/productModel.js";
 
 export const getAllProducts = async (req, res) => {
   try {
-    const getProducts = await Product.find();
+    const getProducts = await Product.find({}).populate("userId", "-password");
+
     return res.status(200).json({
       status: "Success",
       message: "Products Fetched Successfully",
@@ -19,7 +20,14 @@ export const getAllProducts = async (req, res) => {
 export const addProduct = async (req, res) => {
   try {
     const { name, description, category, price } = req.body;
-    // const userId = req.user.id;
+    const userId = req.user?._id || req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({
+        status: "Fail",
+        message: "Unauthorized",
+      });
+    }
 
     if (!name || !description || !category || !price) {
       return res.status(400).json({
@@ -42,6 +50,7 @@ export const addProduct = async (req, res) => {
       description,
       category,
       price,
+      userId,
     });
 
     return res.status(201).json({
