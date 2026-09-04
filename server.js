@@ -16,6 +16,11 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
+
+app.get("/healthz", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
 // Stripe webhook needs the raw request body, so /api/payment is mounted
 // before the JSON body parser (express.raw() is applied inside paymentRoutes).
 app.use("/api/payment", paymentRoutes);
