@@ -11,6 +11,7 @@ import orderRoutes from "./router/orderRoutes.js";
 import adminOrderRoutes from "./router/adminOrderRoutes.js";
 import paymentRoutes from "./router/paymentRoutes.js";
 import refundRoutes from "./router/refundRoutes.js";
+import categoryRoutes from "./router/categoryRoute.js";
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.get("/healthz", (req, res) => {
 });
 
 app.use("/api/product", productRoutes);
+app.use("/api/category", categoryRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/buyer", buyerRoutes);

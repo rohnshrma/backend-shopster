@@ -12,10 +12,11 @@ const productSchema = new mongoose.Schema(
       type: String,
     },
 
+    // NEW CATEGORY REFERENCE
     category: {
-      type: String,
-      enum: ["Electronics", "Fashion", "Books"],
-      default: "Electronics",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
     },
 
     price: {
