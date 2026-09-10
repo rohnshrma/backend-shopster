@@ -1,4 +1,5 @@
 import Product from "../models/productModel.js";
+import cloudinary from "../config/cloudinary.js";
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -13,6 +14,59 @@ export const getAllProducts = async (req, res) => {
     return res.status(500).json({
       status: "Fail",
       message: `Failed To Fetch Products: ${error.message}`,
+    });
+  }
+};
+
+export const getProductImages = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).select("images");
+
+    if (!product) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Product Not Found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "Success",
+      data: product.images,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "Fail",
+      message: `Failed To Fetch Product Images: ${error.message}`,
+    });
+  }
+};
+
+export const getProductThumbnail = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id).select("thumbnail");
+
+    if (!product) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Product Not Found",
+      });
+    }
+
+    if (!product.thumbnail) {
+      return res.status(404).json({
+        status: "Fail",
+        message: "Product Thumbnail Not Found",
+      });
+    }
+
+    return res.status(200).json({
+      status: "Success",
+      data: { thumbnail: product.thumbnail },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: "Fail",
+      message: `Failed To Fetch Product Thumbnail: ${error.message}`,
     });
   }
 };
@@ -36,6 +90,35 @@ export const addProduct = async (req, res) => {
       });
     }
 
+    if (!req.files?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one product image is required",
+      });
+    }
+
+    // images
+    const images = req.files.map((file) => ({
+      url: file.path,
+      public_id: file.filename,
+    }));
+
+    // First image = thumbnail
+    const originalImageUrl = images[0].url;
+
+    // Create thumbnail URL
+    const thumbnail = cloudinary.url(images[0].public_id, {
+      transformation: [
+        {
+          width: 300,
+          height: 300,
+          crop: "fill",
+          quality: "auto",
+          fetch_format: "auto",
+        },
+      ],
+    });
+
     const existingProduct = await Product.findOne({ name });
 
     if (existingProduct) {
@@ -51,6 +134,8 @@ export const addProduct = async (req, res) => {
       category,
       price,
       userId,
+      images,
+      thumbnail,
     });
 
     return res.status(201).json({
