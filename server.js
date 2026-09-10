@@ -11,6 +11,10 @@ import orderRoutes from "./router/orderRoutes.js";
 import adminOrderRoutes from "./router/adminOrderRoutes.js";
 import paymentRoutes from "./router/paymentRoutes.js";
 import refundRoutes from "./router/refundRoutes.js";
+import customerRoutes from "./router/customersRoutes.js";
+import reportsRoutes from "./router/reportsRoutes.js";
+import settingsRoutes from "./router/settingsRoutes.js";
+
 
 const app = express();
 
@@ -43,6 +47,10 @@ app.use("/api/buyer", buyerRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/admin/orders", adminOrderRoutes);
 app.use("/api/admin/refund", refundRoutes);
+app.use("/api/customers", customerRoutes);
+app.use("/api/reports", reportsRoutes);
+app.use("/api/settings", settingsRoutes);
+app.use("/uploads", express.static("uploads"));
 
 const startServer = async () => {
   await connectDB();

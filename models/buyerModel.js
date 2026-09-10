@@ -7,22 +7,31 @@ const buyerSchema = new mongoose.Schema(
       required: true,
       minlength: 3,
     },
+
     email: {
       type: String,
       required: true,
       unique: true,
     },
+
     password: {
       type: String,
       minlength: 8,
       required: true,
       select: false,
     },
+
     phone: {
       type: Number,
     },
+
     address: {
       type: String,
+    },
+
+    isBlocked: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true },
