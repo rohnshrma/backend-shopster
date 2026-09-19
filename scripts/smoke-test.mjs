@@ -41,6 +41,28 @@ const call = async (path, opts = {}) => {
   return { status: res.status, body };
 };
 
+// 1x1 transparent PNG, used to exercise the multer/Cloudinary upload path.
+const TEST_IMAGE = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+  "base64",
+);
+
+const callMultipart = async (path, { fields = {}, files = {}, headers = {} } = {}) => {
+  const form = new FormData();
+  for (const [key, value] of Object.entries(fields)) form.append(key, value);
+  for (const [key, { buffer, filename, type }] of Object.entries(files)) {
+    form.append(key, new Blob([buffer], { type }), filename);
+  }
+  const res = await fetch(`${BASE}${path}`, { method: "POST", headers, body: form });
+  let body = {};
+  try {
+    body = await res.json();
+  } catch {
+    /* empty body */
+  }
+  return { status: res.status, body };
+};
+
 // 1. Admin register + login
 const adminReg = await call("/auth/register", {
   method: "POST",
@@ -49,11 +71,21 @@ const adminReg = await call("/auth/register", {
 check("admin register", adminReg.status === 201 && adminReg.body.token, JSON.stringify(adminReg.body));
 const adminToken = adminReg.body.token;
 
-// 2. Admin creates a product
-const productRes = await call("/product", {
+// 2. Admin creates a category, then a product in it (product image upload
+// requires multipart + Cloudinary; this fails clearly if Cloudinary env vars
+// aren't configured, which is expected in a local/CI run without real keys).
+const categoryRes = await call("/category", {
   method: "POST",
   headers: { Authorization: `Bearer ${adminToken}` },
-  body: JSON.stringify({ name: "Test Widget", description: "A widget", category: "Electronics", price: 100 }),
+  body: JSON.stringify({ name: "Electronics" }),
+});
+check("admin create category", categoryRes.status === 201, JSON.stringify(categoryRes.body));
+const categoryId = categoryRes.body.data?._id;
+
+const productRes = await callMultipart("/product", {
+  headers: { Authorization: `Bearer ${adminToken}` },
+  fields: { name: "Test Widget", description: "A widget", category: categoryId, price: 100 },
+  files: { images: { buffer: TEST_IMAGE, filename: "test.png", type: "image/png" } },
 });
 check("admin create product", productRes.status === 201, JSON.stringify(productRes.body));
 const productId = productRes.body.data?._id;
@@ -116,6 +148,16 @@ check(
   JSON.stringify(checkout.body)
 );
 const orderId = checkout.body.data?.order?._id;
+
+if (!orderId) {
+  console.log(
+    "\nStopping early: no order was created (likely because product creation " +
+      "failed above, e.g. Cloudinary env vars aren't configured locally).",
+  );
+  console.log(`\n${passed} passed, ${failed + 1} failed`);
+  await mongod.stop();
+  process.exit(1);
+}
 
 // 7. Cart is now empty
 const cartAfter = await call("/cart", { headers: { Authorization: `Bearer ${buyerAToken}` } });

@@ -25,3 +25,9 @@ services:
         sync: false
       - key: CLIENT_URL
         sync: false
+      - key: CLOUDINARY_CLOUDNAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_SECRET
+        sync: false

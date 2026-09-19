@@ -44,7 +44,7 @@ const categorySchema = new mongoose.Schema(
 );
 
 // Automatically create slug from name
-categorySchema.pre("validate", function (next) {
+categorySchema.pre("validate", function () {
   if (this.name) {
     this.slug = this.name
       .toLowerCase()
@@ -53,8 +53,6 @@ categorySchema.pre("validate", function (next) {
       .replace(/[^\w-]+/g, "")
       .replace(/--+/g, "-");
   }
-
-  next();
 });
 
 export default mongoose.model("Category", categorySchema);
